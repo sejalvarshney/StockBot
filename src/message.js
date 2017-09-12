@@ -4,9 +4,11 @@
  */
 
 const recastai = require('recastai')
+const battle = rquire('./buystock')
 
 // This function is the core of the bot behaviour
 const replyMessage = (message) => {
+
   // Instantiate Recast.AI SDK, just for request service
   const request = new recastai.request(process.env.REQUEST_TOKEN, process.env.LANGUAGE)
   // Get text from message received
@@ -42,7 +44,13 @@ const replyMessage = (message) => {
     // Send all replies
     message.reply()
     .then(() => {
-      // Do some code after sending messages
+      if (result.action && result.action.slug === 'buy-stock' && 	result.action.done) {
+        get-stock(result.getMemory('company').raw, 				result.getMemory('stock').raw )
+          .then(res => {
+            message.addReply(res)
+            message.reply()
+          })
+      }
     })
     .catch(err => {
       console.error('Error while sending message to channel', err)
